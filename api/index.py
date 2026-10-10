@@ -2,7 +2,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 import numpy as np
-import json
 
 app = FastAPI()
 
@@ -23,9 +22,7 @@ def root():
 async def options_handler():
     return Response(status_code=200)
 
-
-TELEMETRY_DATA = json.loads(
-[
+TELEMETRY_DATA = [
   {
     "region": "apac",
     "service": "support",
@@ -278,8 +275,7 @@ TELEMETRY_DATA = json.loads(
     "uptime_pct": 97.998,
     "timestamp": 20250312
   }
-
-])
+]
 
 @app.post("/api/latency")
 async def latency_analytics(request: Request):
@@ -293,7 +289,7 @@ async def latency_analytics(request: Request):
         latencies = [r["latency_ms"] for r in records]
         uptimes   = [r["uptime_pct"]  for r in records]
         results.append({
-            "region":      region,
+            "region":       region,
             "avg_latency": round(float(np.mean(latencies)), 2),
             "p95_latency": round(float(np.percentile(latencies, 95)), 2),
             "avg_uptime":  round(float(np.mean(uptimes)), 3),
